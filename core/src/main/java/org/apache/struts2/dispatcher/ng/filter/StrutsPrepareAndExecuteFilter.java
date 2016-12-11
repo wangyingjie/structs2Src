@@ -42,6 +42,9 @@ import java.util.regex.Pattern;
 /**
  * Handles both the preparation and execution phases of the Struts dispatching process.  This filter is better to use
  * when you don't have another filter that needs access to action context information, such as Sitemesh.
+ *
+ * 该类是配置在 web.xml 中的 structs2 的核心过滤器
+ *
  */
 public class StrutsPrepareAndExecuteFilter implements StrutsStatics, Filter {
     protected PrepareOperations prepare;
@@ -76,6 +79,15 @@ public class StrutsPrepareAndExecuteFilter implements StrutsStatics, Filter {
     protected void postInit(Dispatcher dispatcher, FilterConfig filterConfig) {
     }
 
+    /**
+     *  structs2 的 执行入口，以Filter为切入点
+     *
+     * @param req
+     * @param res
+     * @param chain
+     * @throws IOException
+     * @throws ServletException
+     */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) req;
@@ -90,12 +102,15 @@ public class StrutsPrepareAndExecuteFilter implements StrutsStatics, Filter {
                 prepare.assignDispatcherToThread();
                 request = prepare.wrapRequest(request);
                 ActionMapping mapping = prepare.findActionMapping(request, response, true);
+
+                // 通过request ----> ActionMapping ----> Dispatcher
                 if (mapping == null) {
                     boolean handled = execute.executeStaticResourceRequest(request, response);
                     if (!handled) {
                         chain.doFilter(request, response);
                     }
                 } else {
+                    //真正执行Action的地方
                     execute.executeAction(request, response, mapping);
                 }
             }

@@ -431,6 +431,7 @@ public class FilterDispatcher implements StrutsStatics, Filter {
                 return;
             }
 
+            // Action 的执行入口
             dispatcher.serviceAction(request, response, mapping);
 
         } finally {
