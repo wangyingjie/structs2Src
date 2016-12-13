@@ -35,6 +35,8 @@ public @interface Inject {
 
   /**
    * Dependency name. Defaults to {@link Container#DEFAULT_NAME}.
+   *
+   * 变量被静态导入
    */
   String value() default DEFAULT_NAME;
 

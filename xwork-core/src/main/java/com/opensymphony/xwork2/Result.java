@@ -26,10 +26,12 @@ import java.io.Serializable;
  * <li>SwingPanelView - pops up a new Swing panel</li>
  * <li>ActionChainView - executes another action</li>
  * <li>SerlvetRedirectView - redirects the HTTP response to a URL</li>
- * <li>ServletDispatcherView - dispatches the HTTP response to a URL</li>
+ host:port/project1/module3 * <li>ServletDispatcherView - dispatches the HTTP response to a URL</li>
  * </ul>
  *
  * @author plightbo
+ *
+ * XWork 生产线的末端设备，负责输出生产线的生成结果
  */
 public interface Result extends Serializable {
 

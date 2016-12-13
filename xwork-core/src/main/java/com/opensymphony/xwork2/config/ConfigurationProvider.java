@@ -17,6 +17,8 @@ package com.opensymphony.xwork2.config;
 
 /**
  * Interface to be implemented by all forms of XWork configuration classes.
+ *
+ * 加载接口的  Provider  有对应的 Builder 与之相对应
  */
 public interface ConfigurationProvider extends ContainerProvider, PackageProvider {
 }

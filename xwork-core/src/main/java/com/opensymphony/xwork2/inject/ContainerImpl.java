@@ -30,12 +30,18 @@ import java.security.AccessControlException;
  *
  * @author crazybob@google.com (Bob Lee)
  * @see ContainerBuilder
+ *
+ * 容器的基本，完成依赖注入，对象管理
+ *
+ * 容器的内部就是一个对象工厂，支持有对象的构造工厂，不包含具体的实现
  */
 class ContainerImpl implements Container {
 
+	// 自定义的key
 	final Map<Key<?>, InternalFactory<?>> factories;
 	final Map<Class<?>, Set<String>> factoryNamesByType;
 
+	// 初始化 实例变量
 	ContainerImpl( Map<Key<?>, InternalFactory<?>> factories ) {
 		this.factories = factories;
 		Map<Class<?>, Set<String>> map = new HashMap<Class<?>, Set<String>>();
@@ -62,12 +68,16 @@ class ContainerImpl implements Container {
 
 	/**
 	 * Field and method injectors.
+	 *
+	 * 字段和方法的注入器的初始化
 	 */
 	final Map<Class<?>, List<Injector>> injectors =
 			new ReferenceCache<Class<?>, List<Injector>>() {
 				@Override
 				protected List<Injector> create( Class<?> key ) {
 					List<Injector> injectors = new ArrayList<Injector>();
+
+					// 将当前的class类作为key，查找所有满足条件的  Injector
 					addInjectors(key, injectors);
 					return injectors;
 				}
@@ -82,6 +92,7 @@ class ContainerImpl implements Container {
 			return;
 		}
 
+		// 递归调用  完成对父类的注入查找
 		// Add injectors for superclass first.
 		addInjectors(clazz.getSuperclass(), injectors);
 

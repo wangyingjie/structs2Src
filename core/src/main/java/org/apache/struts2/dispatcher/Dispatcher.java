@@ -71,6 +71,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * all requests.
  *
  * @see org.apache.struts2.dispatcher.ng.InitOperations
+ *
+ * 不仅是 Http 请求预处理的实际执行者，更是将 Http 请求与Web容器进行解耦并进行逻辑处理转发的执行驱动核心
  */
 public class Dispatcher {
 

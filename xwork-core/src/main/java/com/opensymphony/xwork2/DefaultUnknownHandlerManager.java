@@ -38,10 +38,12 @@ public class DefaultUnknownHandlerManager implements UnknownHandlerManager {
 
     protected ArrayList<UnknownHandler> unknownHandlers;
 
-    @Inject
+    @Inject // 依赖注入
     public void setContainer(Container container) {
         this.container = container;
         try {
+
+            // 构建初始化对象
             build();
         } catch (Exception e) {
             throw new ConfigurationException(e);
@@ -57,19 +59,29 @@ public class DefaultUnknownHandlerManager implements UnknownHandlerManager {
         ObjectFactory factory = container.getInstance(ObjectFactory.class);
 
         if (configuration != null && container != null) {
+
+            // 依次获取 UnknownHandlerConfig 实例
             List<UnknownHandlerConfig> unkownHandlerStack = configuration.getUnknownHandlerStack();
             unknownHandlers = new ArrayList<UnknownHandler>();
 
             if (unkownHandlerStack != null && !unkownHandlerStack.isEmpty()) {
+
+                //根据一定顺序获取  UnknownHandlerConfig实例
                 //get UnknownHandlers in the specified order
                 for (UnknownHandlerConfig unknownHandlerConfig : unkownHandlerStack) {
+
+                    // 调用 container 构建 UnknownHandler  getInstance
                     UnknownHandler uh = factory.buildUnknownHandler(unknownHandlerConfig.getName(), new HashMap<String, Object>());
                     unknownHandlers.add(uh);
                 }
             } else {
+
+                //根据类型获取  getInstanceNames
                 //add all available UnknownHandlers
                 Set<String> unknowHandlerNames = container.getInstanceNames(UnknownHandler.class);
                 for (String unknowHandlerName : unknowHandlerNames) {
+
+                    // 获取实例
                     UnknownHandler uh = container.getInstance(UnknownHandler.class, unknowHandlerName);
                     unknownHandlers.add(uh);
                 }

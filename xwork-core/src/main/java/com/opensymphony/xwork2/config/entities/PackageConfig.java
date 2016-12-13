@@ -35,6 +35,8 @@ import java.util.Map;
  *
  * @author Rainer Hermanns
  * @version $Revision$
+ *
+ * 定义了数据结构
  */
 public class PackageConfig extends Located implements Comparable, Serializable, InterceptorLocator {
 

@@ -45,18 +45,30 @@ import java.util.regex.Pattern;
  *
  * 该类是配置在 web.xml 中的 structs2 的核心过滤器
  *
+ * struts2 请求预处理 and 执行业务逻辑的执行入口类
+ *
  */
 public class StrutsPrepareAndExecuteFilter implements StrutsStatics, Filter {
+
+    // struts2 进行 Http 请求预处理的操作集合
     protected PrepareOperations prepare;
+
+    // struts2 进行 Http 请求逻辑处理的操作集合
     protected ExecuteOperations execute;
+
+
     protected List<Pattern> excludedPatterns = null;
 
     public void init(FilterConfig filterConfig) throws ServletException {
         InitOperations init = new InitOperations();
+
+        //struts2 的核心分发器
         Dispatcher dispatcher = null;
         try {
             FilterHostConfig config = new FilterHostConfig(filterConfig);
             init.initLogging(config);
+
+            //核心分发器的初始化
             dispatcher = init.initDispatcher(config);
             init.initStaticContentLoader(config, dispatcher);
 

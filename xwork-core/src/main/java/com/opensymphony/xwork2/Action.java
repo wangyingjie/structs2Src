@@ -20,6 +20,8 @@ package com.opensymphony.xwork2;
  * <p/>
  * However, as of XWork 1.1, this is <b>not</b> required and is only here to assist users. You are free to create POJOs
  * that honor the same contract defined by this interface without actually implementing the interface.
+ *
+ * 负责核心业务逻辑调用和实现
  */
 public interface Action {
 

@@ -22,6 +22,8 @@ import java.io.Serializable;
  * Creates objects which will be injected.
  *
  * @author crazybob@google.com (Bob Lee)
+ *
+ * 创建内部对象工厂
  */
 interface InternalFactory<T> extends Serializable {
 
@@ -30,6 +32,8 @@ interface InternalFactory<T> extends Serializable {
    *
    * @param context of this injection
    * @return instance to be injected
+   *
+   * 可以在运行期随时获取对象的实例
    */
   T create(InternalContext context);
 }

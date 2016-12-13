@@ -23,6 +23,7 @@ package com.opensymphony.xwork2.inject;
  */
 class Key<T> {
 
+  // struts-default.xml 中配置的 bean ，映射唯一的实现
   final Class<T> type;
   final String name;
   final int hashCode;

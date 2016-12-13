@@ -38,6 +38,8 @@ import java.util.Map;
  *
  * @author Patrick Lightbody
  * @author Bill Lynch (docs)
+ *
+ * 提供整个生产线工作运行所必须的数据环境
  */
 public class ActionContext implements Serializable {
 

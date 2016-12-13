@@ -59,7 +59,7 @@
                     <nocompile>true</nocompile>
                     <showWarnings>true</showWarnings>
                     <factory>org.apache.struts.annotations.taglib.apt.TLDAnnotationProcessorFactory</factory>
-                    <target>1.5</target>
+                    <!--<target>1.5</target>-->
                     <includes>
                         <include>**/*.java</include>
                     </includes>

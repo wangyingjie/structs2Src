@@ -96,6 +96,8 @@ public class ActionSupport implements Action, Validateable, ValidationAware, Tex
     }
 
     public boolean hasKey(String key) {
+
+        // 核心方法 getTextProvider
         return getTextProvider().hasKey(key);
     }
 
@@ -297,7 +299,7 @@ public class ActionSupport implements Action, Validateable, ValidationAware, Tex
         return textProvider;
     }
 
-    @Inject
+    @Inject  // ActionSupport 将在初始化的时候注入全局的  Container 实例
     public void setContainer(Container container) {
         this.container = container;
     }

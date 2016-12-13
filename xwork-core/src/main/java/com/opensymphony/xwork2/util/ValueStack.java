@@ -22,6 +22,8 @@ import java.util.Map;
  * evaluating an expression, the stack will be searched down the stack, from the latest objects pushed in to the
  * earliest, looking for a bean with a getter or setter for the given property or a method of the given name (depending
  * on the expression being evaluated).
+ *
+ * 提供表达式运算的工具类，也是 XWork 中进行数据访问的基础
  */
 public interface ValueStack {
 

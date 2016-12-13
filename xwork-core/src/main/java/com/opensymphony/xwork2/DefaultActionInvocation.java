@@ -45,6 +45,8 @@ import java.util.Map;
  * @author tmjee
  * @version $Date$ $Id$
  * @see com.opensymphony.xwork2.DefaultActionProxy
+ *
+ * 负责调度整个生产线中的调度者  各个元素依次执行
  */
 public class DefaultActionInvocation implements ActionInvocation {
 

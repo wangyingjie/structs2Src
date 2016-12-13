@@ -64,6 +64,10 @@ import java.util.Set;
  *
  * @see ContainerBuilder
  * @author crazybob@google.com (Bob Lee)
+ *
+ * 关心容器对外提供的服务，而不是容器自身的数据结构
+ *
+ * 辅助的编程元素，他在整个系统中应该被实例化为一个全局的、单例的对象
  */
 public interface Container extends Serializable {
 
@@ -74,6 +78,8 @@ public interface Container extends Serializable {
 
   /**
    * Injects dependencies into the fields and methods of an existing object.
+   *
+   * 进行对象依赖注入的基本操作接口，作为参数的 object 将被XWork容器进行处理
    */
   void inject(Object o);
 
@@ -91,6 +97,8 @@ public interface Container extends Serializable {
   /**
    * Convenience method.&nbsp;Equivalent to {@code getInstance(type,
    * DEFAULT_NAME)}.
+   *
+   * 通过 type 获取所对应的容器中所有注册过的 name
    */
   <T> T getInstance(Class<T> type);
   
@@ -103,6 +111,8 @@ public interface Container extends Serializable {
 
   /**
    * Sets the scope strategy for the current thread.
+   *
+   * 设置当前线程作用范围的策略
    */
   void setScopeStrategy(Scope.Strategy scopeStrategy);
 

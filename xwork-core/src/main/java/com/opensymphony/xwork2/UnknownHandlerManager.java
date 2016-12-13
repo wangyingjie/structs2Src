@@ -23,6 +23,8 @@ import java.util.List;
  * An unknown handler manager contains a list of UnknownHandler and iterates on them by order
  *
  * @see com.opensymphony.xwork2.DefaultUnknownHandlerManager
+ *
+ * 位置的处理器的管理器
  */
 public interface UnknownHandlerManager {
     Result handleUnknownResult(ActionContext actionContext, String actionName, ActionConfig actionConfig, String resultCode);
