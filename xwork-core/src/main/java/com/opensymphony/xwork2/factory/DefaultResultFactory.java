@@ -33,6 +33,7 @@ public class DefaultResultFactory implements ResultFactory {
         Result result = null;
 
         if (resultClassName != null) {
+            // 构建 result 对象
             result = (Result) objectFactory.buildBean(resultClassName, extraContext);
             Map<String, String> params = resultConfig.getParams();
             if (params != null) {

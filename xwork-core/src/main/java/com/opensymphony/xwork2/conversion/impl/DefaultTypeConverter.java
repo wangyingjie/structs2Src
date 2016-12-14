@@ -64,6 +64,8 @@ public abstract class DefaultTypeConverter implements TypeConverter {
     private Container container;
 
     static {
+
+        // 注册默认支持的基本类型
         Map<Class, Object> map = new HashMap<Class, Object>();
         map.put(Boolean.TYPE, Boolean.FALSE);
         map.put(Byte.TYPE, Byte.valueOf((byte) 0));
@@ -100,6 +102,7 @@ public abstract class DefaultTypeConverter implements TypeConverter {
             
         // for backwards-compatibility
         } else if (obj instanceof ognl.TypeConverter) {
+            // 用于向后兼容
             return new XWorkTypeConverterWrapper((ognl.TypeConverter) obj);
         }
         return null; 
@@ -123,11 +126,13 @@ public abstract class DefaultTypeConverter implements TypeConverter {
 
         if (value != null) {
             /* If array -> array then convert components of array individually */
-            if (value.getClass().isArray() && toType.isArray()) {
+            if (value.getClass().isArray() && toType.isArray()) {// 是数组
                 Class componentType = toType.getComponentType();
 
                 result = Array.newInstance(componentType, Array
                         .getLength(value));
+
+                // 依次转换数组中的每个元素
                 for (int i = 0, icount = Array.getLength(value); i < icount; i++) {
                     Array.set(result, i, convertValue(Array.get(value, i),
                             componentType));
@@ -159,6 +164,7 @@ public abstract class DefaultTypeConverter implements TypeConverter {
                     result = enumValue((Class<Enum>)toType, value);
             }
         } else {
+            // Class 中的工具方法，可以直接判断摸个类型是不是 基本类型，
             if (toType.isPrimitive()) {
                 result = primitiveDefaults.get(toType);
             }

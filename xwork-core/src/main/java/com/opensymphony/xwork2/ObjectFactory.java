@@ -47,12 +47,17 @@ import java.util.Map;
  * <p/>
  *
  * @author Jason Carreira
+ *
+ * 对象的创建、对象的依赖注入是对象生命周期管理的两个不同方面
+ *
  */
 public class ObjectFactory implements Serializable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ObjectFactory.class);
 
+    // 缓存 classloader
     private transient ClassLoader ccl;
+    // 缓存容器，用于依赖注入
     private Container container;
 
     private ActionFactory actionFactory;
@@ -126,6 +131,8 @@ public class ObjectFactory implements Serializable {
      * @param className The fully qualified name of the class to return
      * @return The class itself
      * @throws ClassNotFoundException
+     *
+     * 利用ClassLoaderUtil 根据 className 获取class对象
      */
     public Class getClassInstance(String className) throws ClassNotFoundException {
         if (ccl != null) {
@@ -143,6 +150,8 @@ public class ObjectFactory implements Serializable {
      * @param extraContext a Map of extra context which uses the same keys as the {@link com.opensymphony.xwork2.ActionContext}
      * @return instance of the action class to handle a web request
      * @throws Exception
+     *
+     * 够将XWork中 Action 实例的快捷方法
      */
     public Object buildAction(String actionName, String namespace, ActionConfig config, Map<String, Object> extraContext) throws Exception {
         return actionFactory.buildAction(actionName, namespace, config, extraContext);
@@ -160,6 +169,8 @@ public class ObjectFactory implements Serializable {
 
     /**
      * @param obj
+     *
+     * 针对给定的 object 实施依赖注入
      */
     protected Object injectInternalBeans(Object obj) {
         if (obj != null && container != null) {
@@ -173,8 +184,11 @@ public class ObjectFactory implements Serializable {
      *
      * @param className the type of Object to build
      * @param extraContext a Map of extra context which uses the same keys as the {@link com.opensymphony.xwork2.ActionContext}
+     *
+     * 用于构建一个普通 bean 的核心方法
      */
     public Object buildBean(String className, Map<String, Object> extraContext) throws Exception {
+        // 包含了对象创建、注入这两个核心过程，因为也成为了一个统一的对象初始化操作接口
         return buildBean(className, extraContext, true);
     }
     
@@ -204,6 +218,8 @@ public class ObjectFactory implements Serializable {
      * @param interceptorConfig    the InterceptorConfig from the configuration
      * @param interceptorRefParams a Map of params provided in the Interceptor reference in the
      *                             Action mapping or InterceptorStack definition
+     *
+     *  构建拦截器的快捷方法
      */
     public Interceptor buildInterceptor(InterceptorConfig interceptorConfig, Map<String, String> interceptorRefParams) throws ConfigurationException {
         return interceptorFactory.buildInterceptor(interceptorConfig, interceptorRefParams);
@@ -225,6 +241,8 @@ public class ObjectFactory implements Serializable {
      * @param className the type of Validator to build
      * @param params    property name -> value Map to set onto the Validator instance
      * @param extraContext a Map of extra context which uses the same keys as the {@link com.opensymphony.xwork2.ActionContext}
+     *
+     * 构建安正框架  Validator
      */
     public Validator buildValidator(String className, Map<String, Object> params, Map<String, Object> extraContext) throws Exception {
         return validatorFactory.buildValidator(className, params, extraContext);

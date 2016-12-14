@@ -117,6 +117,8 @@ public class InstantiatingNullHandler implements NullHandler {
 
         try {
             String propName = property.toString();
+
+            //火女实际的对象
             Object realTarget = reflectionProvider.getRealTarget(propName, context, target);
             Class clazz = null;
 

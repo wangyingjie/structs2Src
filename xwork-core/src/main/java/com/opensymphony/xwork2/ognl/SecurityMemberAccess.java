@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 /**
  * Allows access decisions to be made on the basis of whether a member is static or not.
  * Also blocks or allows access to properties.
+ *
+ * 属性访问策略
  */
 public class SecurityMemberAccess extends DefaultMemberAccess {
 
@@ -51,6 +53,11 @@ public class SecurityMemberAccess extends DefaultMemberAccess {
         return allowStaticMethodAccess;
     }
 
+    /**
+     * 判断当前Member是否具备访问权限
+     *
+     * 根据指定属性的名称正则表达式来规定属性可以被访问，某些属性不能被访问
+     */
     @Override
     public boolean isAccessible(Map context, Object target, Member member, String propertyName) {
         if (checkEnumAccess(target, member)) {

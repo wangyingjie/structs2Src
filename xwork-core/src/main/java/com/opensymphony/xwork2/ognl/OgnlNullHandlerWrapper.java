@@ -4,6 +4,7 @@ import com.opensymphony.xwork2.conversion.NullHandler;
 
 import java.util.Map;
 
+// 处理Null
 public class OgnlNullHandlerWrapper implements ognl.NullHandler {
 
     private NullHandler wrapped;

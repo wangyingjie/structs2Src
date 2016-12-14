@@ -38,17 +38,21 @@ import java.util.Map;
 * null and continue.
 * @author Luke Blanshard (blanshlu@netscape.net)
 * @author Drew Davidson (drew@ognl.org)
+ *
+ * 对Null 值的处理
 */
 public interface NullHandler
 {
     /**
         Method called on target returned null.
+        调用的方法不存在
      */
     public Object nullMethodResult(Map<String, Object> context, Object target, String methodName, Object[] args);
     
     /**
         Property in target evaluated to null.  Property can be a constant
         String property name or a DynamicSubscript.
+        调用的属性不存在
      */
     public Object nullPropertyValue(Map<String, Object> context, Object target, Object property);
 }

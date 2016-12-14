@@ -28,6 +28,7 @@ public class DefaultInterceptorFactory implements InterceptorFactory {
         this.reflectionProvider = reflectionProvider;
     }
 
+    // 构造拦截器
     public Interceptor buildInterceptor(InterceptorConfig interceptorConfig, Map<String, String> interceptorRefParams) throws ConfigurationException {
         String interceptorClassName = interceptorConfig.getClassName();
         Map<String, String> thisInterceptorClassParams = interceptorConfig.getParams();
@@ -38,9 +39,16 @@ public class DefaultInterceptorFactory implements InterceptorFactory {
         Throwable cause;
 
         try {
+
+            // Interceptor 的生命周期比较长
+            // 跨越 session 执行，在这里不应传入额外的  context 信息
             // interceptor instances are long-lived and used across user sessions, so don't try to pass in any extra context
             Interceptor interceptor = (Interceptor) objectFactory.buildBean(interceptorClassName, null);
+
+            //
             reflectionProvider.setProperties(params, interceptor);
+
+            // 拦截器初始化
             interceptor.init();
 
             return interceptor;

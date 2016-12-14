@@ -39,6 +39,9 @@ import static org.apache.commons.lang3.BooleanUtils.toBoolean;
  * @author $Author$
  * @author Rainer Hermanns
  * @version $Revision$
+ *
+ * 通过寻址创建 java 实例
+ * 该类是对 Ognl的主要扩展
  */
 public class CompoundRootAccessor implements PropertyAccessor, MethodAccessor, ClassResolver {
 
@@ -263,10 +266,14 @@ public class CompoundRootAccessor implements PropertyAccessor, MethodAccessor, C
         return null;
     }
 
+    // 核心方法
     public Class classForName(String className, Map context) throws ClassNotFoundException {
+
+        //获取 Ognl 的root对象
         Object root = Ognl.getRoot(context);
 
         try {
+
             if (root instanceof CompoundRoot) {
                 if (className.startsWith("vs")) {
                     CompoundRoot compoundRoot = (CompoundRoot) root;

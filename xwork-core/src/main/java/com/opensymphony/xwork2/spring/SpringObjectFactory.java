@@ -37,6 +37,8 @@ import java.util.Map;
  * before the xwork.xml file is parsed. In a servlet environment, this could be done using a ServletContextListener.
  *
  * @author Simon Stewart (sms@lateral.net)
+ *
+ * 将对象的创建交给 spring 容器来做，这样就可以享受一些特殊的服务
  */
 public class SpringObjectFactory extends ObjectFactory implements ApplicationContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(SpringObjectFactory.class);

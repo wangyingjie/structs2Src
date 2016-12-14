@@ -159,6 +159,9 @@ public class XWorkConverter extends DefaultTypeConverter {
 
     @Inject
     public void setDefaultTypeConverter(XWorkBasicConverter conv) {
+
+        // 默认被注入的是 XWorkBasicConverter 类
+        // 这样一来整个 XWorkConverter看起来就像是一个装饰类
         this.defaultTypeConverter = conv;
     }
 
@@ -279,6 +282,7 @@ public class XWorkConverter extends DefaultTypeConverter {
                 property = (String) classProp[1];
             }
 
+            // 根据 clazz, property 查找对应的类型转化方式
             tc = (TypeConverter) getConverter(clazz, property);
 
             if (LOG.isDebugEnabled())

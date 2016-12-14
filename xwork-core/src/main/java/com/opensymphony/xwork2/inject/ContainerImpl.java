@@ -170,6 +170,9 @@ class ContainerImpl implements Container {
 		return Modifier.isStatic(member.getModifiers());
 	}
 
+	/**
+	 * 属性注入器
+	 */
 	static class FieldInjector implements Injector {
 
 		final Field field;
@@ -192,6 +195,7 @@ class ContainerImpl implements Container {
 				}
 			}
 
+			// 根据 type、name 到Container中查找响应的对象工厂
 			Key<?> key = Key.newInstance(field.getType(), name);
 			factory = container.getFactory(key);
 			if (factory == null) {
@@ -202,10 +206,12 @@ class ContainerImpl implements Container {
 			this.externalContext = ExternalContext.newInstance(field, key, container);
 		}
 
+		//执行注入
 		public void inject( InternalContext context, Object o ) {
 			ExternalContext<?> previous = context.getExternalContext();
 			context.setExternalContext(externalContext);
 			try {
+				//通过反射
 				field.set(o, factory.create(context));
 			} catch ( IllegalAccessException e ) {
 				throw new AssertionError(e);
@@ -275,6 +281,9 @@ class ContainerImpl implements Container {
 		return null;
 	}
 
+	/**
+	 * 构造函数注入器
+	 */
 	static class MethodInjector implements Injector {
 
 		final Method method;
@@ -301,6 +310,8 @@ class ContainerImpl implements Container {
 				throw new DependencyException(
 						method + " has no parameters to inject.");
 			}
+
+			// 根据每个参数查找对应的   injector
 			parameterInjectors = container.getParametersInjectors(
 					method, method.getParameterAnnotations(), parameterTypes, name);
 		}
@@ -497,9 +508,12 @@ class ContainerImpl implements Container {
 		return parameters;
 	}
 
-	void inject( Object o, InternalContext context ) {
+	//实际执行依赖注入的方法
+	void inject(Object o, InternalContext context) {
+		//查找一个需要被以来注入的字段、方法
 		List<Injector> injectors = this.injectors.get(o.getClass());
-		for ( Injector injector : injectors ) {
+		for (Injector injector : injectors) {
+			// Method/Filed
 			injector.inject(context, o);
 		}
 	}
@@ -520,6 +534,8 @@ class ContainerImpl implements Container {
 		Key<T> key = Key.newInstance(type, name);
 		context.setExternalContext(ExternalContext.newInstance(null, key, this));
 		try {
+
+			//获取对象的创建工厂
 			InternalFactory o = getFactory(key);
 			if (o != null) {
 				return getFactory(key).create(context);
@@ -535,9 +551,11 @@ class ContainerImpl implements Container {
 		return getInstance(type, DEFAULT_NAME, context);
 	}
 
-	public void inject( final Object o ) {
+	public void inject(final Object o) {
+		//通过回调机制完成注入
 		callInContext(new ContextualCallable<Void>() {
-			public Void call( InternalContext context ) {
+			public Void call(InternalContext context) {
+				//调用实际的注入方法
 				inject(o, context);
 				return null;
 			}
@@ -586,12 +604,18 @@ class ContainerImpl implements Container {
 
 	/**
 	 * Looks up thread local context. Creates (and removes) a new context if necessary.
+	 *
+	 * 查找线程安全的执行上下文环境
 	 */
 	<T> T callInContext( ContextualCallable<T> callable ) {
 		Object[] reference = localContext.get();
 		if (reference[0] == null) {
+
+			//不存在则创建一个新的环境
 			reference[0] = new InternalContext(this);
 			try {
+
+				//直接调用接口完成逻辑
 				return callable.call((InternalContext) reference[0]);
 			} finally {
 				// Only remove the context if this call created it.
@@ -600,6 +624,8 @@ class ContainerImpl implements Container {
 				localContext.remove();
 			}
 		} else {
+
+			//已存在直接调用接口完成逻辑
 			// Someone else will clean up this context.
 			return callable.call((InternalContext) reference[0]);
 		}
