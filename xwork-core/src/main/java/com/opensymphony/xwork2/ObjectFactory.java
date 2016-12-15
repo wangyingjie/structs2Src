@@ -174,6 +174,8 @@ public class ObjectFactory implements Serializable {
      */
     protected Object injectInternalBeans(Object obj) {
         if (obj != null && container != null) {
+
+            //容器注入
             container.inject(obj);
         }
         return obj;

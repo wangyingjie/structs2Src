@@ -33,7 +33,8 @@ public class DefaultActionProxyFactory implements ActionProxyFactory {
     public DefaultActionProxyFactory() {
         super();
     }
-    
+
+    //注入容器
     @Inject
     public void setContainer(Container container) {
         this.container = container;
@@ -51,10 +52,15 @@ public class DefaultActionProxyFactory implements ActionProxyFactory {
         return createActionProxy(namespace, actionName, null, extraContext, executeResult, cleanupContext);
     }
 
+    // 构建 ActionProxy 对象
     public ActionProxy createActionProxy(String namespace, String actionName, String methodName, Map<String, Object> extraContext, boolean executeResult, boolean cleanupContext) {
         
         ActionInvocation inv = createActionInvocation(extraContext, true);
+
+        // 注入
         container.inject(inv);
+
+        //
         return createActionProxy(inv, namespace, actionName, methodName, executeResult, cleanupContext);
     }
     
@@ -69,9 +75,15 @@ public class DefaultActionProxyFactory implements ActionProxyFactory {
 
     public ActionProxy createActionProxy(ActionInvocation inv, String namespace, String actionName, String methodName, boolean executeResult, boolean cleanupContext) {
 
+        //默认实现  DefaultActionProxy
         DefaultActionProxy proxy = new DefaultActionProxy(inv, namespace, actionName, methodName, executeResult, cleanupContext);
+
+        //注入
         container.inject(proxy);
+
+        // 预处理、初始化
         proxy.prepare();
+
         return proxy;
     }
 

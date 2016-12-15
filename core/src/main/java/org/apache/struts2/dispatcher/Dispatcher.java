@@ -83,6 +83,7 @@ public class Dispatcher {
 
     /**
      * Provide a thread local instance.
+     * 保存自己的实例
      */
     private static ThreadLocal<Dispatcher> instance = new ThreadLocal<Dispatcher>();
 
@@ -282,6 +283,8 @@ public class Dispatcher {
 
     /**
      * Releases all instances bound to this dispatcher instance.
+     *
+     * 垃圾清理
      */
     public void cleanup() {
 
@@ -473,6 +476,8 @@ public class Dispatcher {
     /**
      * Load configurations, including both XML and zero-configuration strategies,
      * and update optional settings, including whether to reload configurations and resource files.
+     *
+     * 核心驱动力：对各种配置文件的一次统一的对象化处理
      */
     public void init() {
 
@@ -538,6 +543,10 @@ public class Dispatcher {
      *                          would end up as a 5xx by the servlet container)
      *
      * @since 2.3.17
+     *
+     * 通过这个方法把 web 容器的参数彻底转为  Xwork 执行参数，解除容器的耦合
+     *
+     * 属于 Dispatcher 的核心方法，也是Struts2处理Http请求的核心方法和入口
      */
     public void serviceAction(HttpServletRequest request, HttpServletResponse response, ActionMapping mapping)
             throws ServletException {
@@ -574,6 +583,8 @@ public class Dispatcher {
                 Result result = mapping.getResult();
                 result.execute(proxy.getInvocation());
             } else {
+
+                // 执行Action的调用链
                 proxy.execute();
             }
 

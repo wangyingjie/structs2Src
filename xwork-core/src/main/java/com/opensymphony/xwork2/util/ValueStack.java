@@ -91,6 +91,8 @@ public interface ValueStack {
      * @param value                   the value to be set into the named property
      * @param throwExceptionOnFailure a flag to tell whether an exception should be thrown if there is no property with
      *                                the given name.
+     *
+     * 根据传入的字符串进行挟制计算
      */
     public abstract void setValue(String expr, Object value, boolean throwExceptionOnFailure);
 
@@ -113,6 +115,8 @@ public interface ValueStack {
      * @param expr   the expression giving the path of properties to navigate to find the property value to return
      * @param asType the type to convert the return value to
      * @return the result of evaluating the expression
+     *
+     * 根据传入的字符串表达式进行求值计算
      */
     public abstract Object findValue(String expr, Class asType);
     public abstract Object findValue(String expr, Class asType,  boolean throwExceptionOnFailure);
@@ -122,6 +126,10 @@ public interface ValueStack {
      *
      * @return the object on the top.
      * @see CompoundRoot#peek()
+     *
+     * peek  n. 偷看；一瞥，看一眼
+     *
+     * 获取栈顶元素，并不改变栈本身
      */
     public abstract Object peek();
 

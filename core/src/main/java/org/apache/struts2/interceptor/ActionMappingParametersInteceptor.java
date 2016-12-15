@@ -80,8 +80,11 @@ public class ActionMappingParametersInteceptor extends ParametersInterceptor {
      */
     @Override
     protected Map<String, Object> retrieveParameters(ActionContext ac) {
+        // 获取 ActionMapping 对象
         ActionMapping mapping = (ActionMapping) ac.get(ServletActionContext.ACTION_MAPPING);
         if (mapping != null) {
+
+            //从mapping中获取参数列表
             return mapping.getParams();
         } else {
             return Collections.emptyMap();

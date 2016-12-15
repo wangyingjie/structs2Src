@@ -36,7 +36,8 @@ import java.util.Set;
  * Creates an Ognl value stack
  */
 public class OgnlValueStackFactory implements ValueStackFactory {
-    
+
+    // 以下属性通过 inject 注解注入
     private XWorkConverter xworkConverter;
     private CompoundRootAccessor compoundRootAccessor;
     private TextProvider textProvider;
@@ -59,8 +60,11 @@ public class OgnlValueStackFactory implements ValueStackFactory {
     }
 
     public ValueStack createValueStack() {
+        // 创建 ValueStack 实例
         ValueStack stack = new OgnlValueStack(xworkConverter, compoundRootAccessor, textProvider, allowStaticMethodAccess);
+        // 参数注入
         container.inject(stack);
+
         stack.getContext().put(ActionContext.CONTAINER, container);
         return stack;
     }
@@ -71,9 +75,12 @@ public class OgnlValueStackFactory implements ValueStackFactory {
         stack.getContext().put(ActionContext.CONTAINER, container);
         return result;
     }
-    
+
+    // 主要初始化 ognl OgnlRuntime 中的三大规则：PropertyAccessor  MethodAccessor  NullHandler
     @Inject
     public void setContainer(Container container) throws ClassNotFoundException {
+
+       // OgnlRuntime 全部是是静态工具方法和属性
         Set<String> names = container.getInstanceNames(PropertyAccessor.class);
         for (String name : names) {
             Class cls = Class.forName(name);
@@ -81,6 +88,8 @@ public class OgnlValueStackFactory implements ValueStackFactory {
                 if (Map.class.isAssignableFrom(cls)) {
                     PropertyAccessor acc = container.getInstance(PropertyAccessor.class, name);
                 }
+
+                //PropertyAccessor 属性
                 OgnlRuntime.setPropertyAccessor(cls, container.getInstance(PropertyAccessor.class, name));
                 if (compoundRootAccessor == null && CompoundRoot.class.isAssignableFrom(cls)) {
                     compoundRootAccessor = (CompoundRootAccessor) container.getInstance(PropertyAccessor.class, name);
@@ -92,14 +101,17 @@ public class OgnlValueStackFactory implements ValueStackFactory {
         for (String name : names) {
             Class cls = Class.forName(name);
             if (cls != null) {
+                // MethodAccessor 属性
                 OgnlRuntime.setMethodAccessor(cls, container.getInstance(MethodAccessor.class, name));
             }
         }
 
+        //
         names = container.getInstanceNames(NullHandler.class);
         for (String name : names) {
             Class cls = Class.forName(name);
             if (cls != null) {
+                //NullHandler 属性
                 OgnlRuntime.setNullHandler(cls, new OgnlNullHandlerWrapper(container.getInstance(NullHandler.class, name)));
             }
         }

@@ -235,21 +235,23 @@ public class DefaultActionInvocation implements ActionInvocation {
         try {
             UtilTimerStack.push(profileKey);
 
-            if (executed) {
+            if (executed) {//首先判断是否已经执行过
                 throw new IllegalStateException("Action has already executed");
             }
 
-            if (interceptors.hasNext()) {
+            if (interceptors.hasNext()) {//遍历迭代器
                 final InterceptorMapping interceptor = interceptors.next();
                 String interceptorMsg = "interceptor: " + interceptor.getName();
                 UtilTimerStack.push(interceptorMsg);
                 try {
-                                resultCode = interceptor.getInterceptor().intercept(DefaultActionInvocation.this);
-                            }
-                finally {
+                    // 递归调用
+                    resultCode = interceptor.getInterceptor().intercept(DefaultActionInvocation.this);
+                } finally {
                     UtilTimerStack.pop(interceptorMsg);
                 }
             } else {
+
+                //直接执行 Action 对象
                 resultCode = invokeActionOnly();
             }
 
@@ -259,7 +261,8 @@ public class DefaultActionInvocation implements ActionInvocation {
                 if (preResultListeners != null) {
                     LOG.trace("Executing PreResultListeners for result [#0]", result);
 
-                    for (Object preResultListener : preResultListeners) {
+                    // 在 interceptor、action 执行之后、RESULT 执行之前执行
+                    for (Object preResultListener : preResultListeners) {// 事件处理
                         PreResultListener listener = (PreResultListener) preResultListener;
 
                         String _profileKey = "preResultListener: ";
@@ -273,6 +276,7 @@ public class DefaultActionInvocation implements ActionInvocation {
                     }
                 }
 
+                // 最后执行 RESULT 对象的逻辑
                 // now execute the result, if we're supposed to
                 if (proxy.getExecuteResult()) {
                     executeResult();
@@ -399,7 +403,7 @@ public class DefaultActionInvocation implements ActionInvocation {
 
         createAction(contextMap);
 
-        if (pushAction) {
+        if (pushAction) {// 把 action 放到 context 中
             stack.push(action);
             contextMap.put("action", action);
         }

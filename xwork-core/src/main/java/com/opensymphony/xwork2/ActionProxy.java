@@ -24,6 +24,9 @@ import com.opensymphony.xwork2.config.entities.ActionConfig;
  * An example of this would be a remote proxy, where the layer between XWork and the action might be RMI or SOAP.
  *
  * @author Jason Carreira
+ *
+ * 维护 XWork 执行元素与请求对象之间的配置映射关系
+ *
  */
 public interface ActionProxy {
 
@@ -31,6 +34,8 @@ public interface ActionProxy {
      * Gets the Action instance for this Proxy.
      *
      * @return the Action instance
+     *
+     * 代理的 Action 对象
      */
     Object getAction();
 
@@ -45,6 +50,8 @@ public interface ActionProxy {
      * Gets the ActionConfig this ActionProxy is built from.
      *
      * @return the ActionConfig
+     *
+     * 代理Action 的配置对象
      */
     ActionConfig getConfig();
 
@@ -83,6 +90,8 @@ public interface ActionProxy {
      * @return the result code returned from executing the ActionInvocation
      * @throws Exception can be thrown.
      * @see ActionInvocation
+     *
+     * ActionProxy 的执行接口
      */
     String execute() throws Exception;
 
@@ -90,6 +99,8 @@ public interface ActionProxy {
      * Gets the method name to execute, or <tt>null</tt> if no method has been specified (meaning <code>execute</code> will be invoked).
      *
      * @return the method to execute
+     *
+     * 获取 Action 对象中进行请求响应的方法名称，如果为空，则使用默认的 execute 方法
      */
     String getMethod();
 

@@ -132,6 +132,9 @@ import java.util.TreeMap;
  * </pre>
  *
  * @author Patrick Lightbody
+ *
+ * 数据环境读取请求数据  与  Action 的属性变量的映射过程就是在此拦截器中完成的
+ *
  */
 public class ParametersInterceptor extends MethodFilterInterceptor {
 
@@ -199,11 +202,14 @@ public class ParametersInterceptor extends MethodFilterInterceptor {
 
     };
 
+    // 执行拦截
     @Override
     public String doIntercept(ActionInvocation invocation) throws Exception {
         Object action = invocation.getAction();
         if (!(action instanceof NoParameters)) {
             ActionContext ac = invocation.getInvocationContext();
+
+            //检索参数对象   外部环境的数据提供者  由此就可以实现请求参数和Action 属性的映射
             final Map<String, Object> parameters = retrieveParameters(ac);
 
             if (LOG.isDebugEnabled()) {
@@ -218,6 +224,8 @@ public class ParametersInterceptor extends MethodFilterInterceptor {
                     ReflectionContextState.setReportingConversionErrors(contextMap, true);
 
                     ValueStack stack = ac.getValueStack();
+
+                    //设置参数到  属性变量中
                     setParameters(action, stack, parameters);
                 } finally {
                     ReflectionContextState.setCreatingNullObjects(contextMap, false);

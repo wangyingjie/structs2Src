@@ -42,6 +42,8 @@ import static org.apache.commons.lang3.BooleanUtils.toBoolean;
  *
  * 通过寻址创建 java 实例
  * 该类是对 Ognl的主要扩展
+ *
+ * 实现了3个重要的接口类
  */
 public class CompoundRootAccessor implements PropertyAccessor, MethodAccessor, ClassResolver {
 
@@ -74,12 +76,14 @@ public class CompoundRootAccessor implements PropertyAccessor, MethodAccessor, C
         CompoundRoot root = (CompoundRoot) target;
         OgnlContext ognlContext = (OgnlContext) context;
 
-        for (Object o : root) {
+        for (Object o : root) {// 循环超照 compoundRoot 对象
             if (o == null) {
                 continue;
             }
 
             try {
+
+                // 判断是否能写值
                 if (OgnlRuntime.hasSetProperty(ognlContext, o, name)) {
                     OgnlRuntime.setProperty(ognlContext, o, name, value);
 
@@ -125,9 +129,9 @@ public class CompoundRootAccessor implements PropertyAccessor, MethodAccessor, C
         if (name instanceof Integer) {
             Integer index = (Integer) name;
 
-            return root.cutStack(index);
+            return root.cutStack(index);// 获取子栈
         } else if (name instanceof String) {
-            if ("top".equals(name)) {
+            if ("top".equals(name)) {// 如果是栈顶指针
                 if (root.size() > 0) {
                     return root.get(0);
                 } else {
@@ -135,13 +139,15 @@ public class CompoundRootAccessor implements PropertyAccessor, MethodAccessor, C
                 }
             }
 
-            for (Object o : root) {
+            for (Object o : root) {//普通的属性名称要循环整个栈，找到第一个匹配的元素就返回
                 if (o == null) {
                     continue;
                 }
 
                 try {
                     if ((OgnlRuntime.hasGetProperty(ognlContext, o, name)) || ((o instanceof Map) && ((Map) o).containsKey(name))) {
+
+                        //找到属性后、停止查找，并直接返回属性值作为结果
                         return OgnlRuntime.getProperty(ognlContext, o, name);
                     }
                 } catch (OgnlException e) {

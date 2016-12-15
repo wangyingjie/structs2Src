@@ -76,6 +76,8 @@ public interface Action {
      * @throws Exception thrown if a system level exception occurs.
      *                   <b>Note:</b> Application level exceptions should be handled by returning
      *                   an error value, such as <code>Action.ERROR</code>.
+     *
+     * 该方法作为默认的 Action 执行入口
      */
     public String execute() throws Exception;
 

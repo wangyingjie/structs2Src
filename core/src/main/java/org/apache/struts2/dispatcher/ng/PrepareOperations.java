@@ -64,10 +64,15 @@ public class PrepareOperations {
 
     /**
      * Creates the action context and initializes the thread local
+     *
+     * 创建  ActionContext  并 初始化当前线程
+     *
+     * ActionContext 的创建总是伴随着 ValueStack 的创建
+     * ValueStack 的上下文环境与ActionContext 的数据存储空间是等同的
      */
     public ActionContext createActionContext(HttpServletRequest request, HttpServletResponse response) {
         ActionContext ctx;
-        Integer counter = 1;
+        Integer counter = 1;// 计数 为 cleanup 做准备
         Integer oldCounter = (Integer) request.getAttribute(CLEANUP_RECURSION_COUNTER);
         if (oldCounter != null) {
             counter = oldCounter + 1;
@@ -75,14 +80,24 @@ public class PrepareOperations {
         
         ActionContext oldContext = ActionContext.getContext();
         if (oldContext != null) {
+            // 复制当前线程未新的 ActionContext
             // detected existing context, so we are probably in a forward
             ctx = new ActionContext(new HashMap<String, Object>(oldContext.getContextMap()));
         } else {
+
+            // 创建 ValueStack
             ValueStack stack = dispatcher.getContainer().getInstance(ValueStackFactory.class).createValueStack();
+
+            // 消除了对 web 容器的依赖
             stack.getContext().putAll(dispatcher.createContextMap(request, response, null));
+
+            // 将ValueStack的数据环境与 ActionContext 等同起来
             ctx = new ActionContext(stack.getContext());
         }
+        //
         request.setAttribute(CLEANUP_RECURSION_COUNTER, counter);
+
+        // 保存到当前线程
         ActionContext.setContext(ctx);
         return ctx;
     }

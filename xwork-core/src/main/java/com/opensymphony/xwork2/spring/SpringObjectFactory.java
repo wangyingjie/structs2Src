@@ -215,8 +215,8 @@ public class SpringObjectFactory extends ObjectFactory implements ApplicationCon
      */
     public Object autoWireBean(Object bean, AutowireCapableBeanFactory autoWiringFactory) {
         if (autoWiringFactory != null) {
-            autoWiringFactory.autowireBeanProperties(bean,
-                    autowireStrategy, false);
+            // 完成 spring 的bean属性注入
+            autoWiringFactory.autowireBeanProperties(bean, autowireStrategy, false);
         }
         injectApplicationContext(bean);
 

@@ -597,13 +597,18 @@ public class PackageConfig extends Located implements Comparable, Serializable, 
         }
 
         public PackageConfig build() {
+
+            // 锁定集合类不可变
             embalmTarget();
             PackageConfig result = target;
+
+            // 构造 PackageConfig 对象实例
             target = new PackageConfig(result);
             return result;
         }
 
         protected void embalmTarget() {
+            // list 元素设置为不可变
             target.actionConfigs = Collections.unmodifiableMap(target.actionConfigs);
             target.globalResultConfigs = Collections.unmodifiableMap(target.globalResultConfigs);
             target.interceptorConfigs = Collections.unmodifiableMap(target.interceptorConfigs);

@@ -66,9 +66,12 @@ public class XWork {
     public void executeAction(String namespace, String name, String method, Map<String, Object> extraContext) throws XWorkException {
         Configuration config = configurationManager.getConfiguration();
         try {
+
+            // 创建 ActionProxy
             ActionProxy proxy = config.getContainer().getInstance(ActionProxyFactory.class).createActionProxy(
                     namespace, name, method, extraContext, true, false);
-        
+
+            // 执行 Action  的入口
             proxy.execute();
         } catch (Exception e) {
             throw new XWorkException(e);

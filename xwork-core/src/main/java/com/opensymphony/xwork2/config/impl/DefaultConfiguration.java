@@ -231,6 +231,8 @@ public class DefaultConfiguration implements Configuration {
         List<PackageProvider> packageProviders = new ArrayList<PackageProvider>();
 
         ContainerProperties props = new ContainerProperties();
+
+        // builder 模式
         ContainerBuilder builder = new ContainerBuilder();
         Container bootstrap = createBootstrapContainer(providers);
         for (final ContainerProvider containerProvider : providers)

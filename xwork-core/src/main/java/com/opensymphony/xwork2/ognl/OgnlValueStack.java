@@ -57,6 +57,8 @@ public class OgnlValueStack implements Serializable, ValueStack, ClearableValueS
     private static final String MAP_IDENTIFIER_KEY = "com.opensymphony.xwork2.util.OgnlValueStack.MAP_IDENTIFIER_KEY";
     private static final Logger LOG = LoggerFactory.getLogger(OgnlValueStack.class);
 
+    // Compound vt. 合成；混合；和解妥协；搀合
+    // CompoundRoot 是一个继承 List 的数据结构
     CompoundRoot root;
     transient Map<String, Object> context;
     Class defaultType;
@@ -74,6 +76,7 @@ public class OgnlValueStack implements Serializable, ValueStack, ClearableValueS
     }
 
     protected OgnlValueStack(ValueStack vs, XWorkConverter xworkConverter, CompoundRootAccessor accessor, boolean allowStaticAccess) {
+        // 设置root  完成初始化
         setRoot(xworkConverter, accessor, new CompoundRoot(vs.getRoot()), allowStaticAccess);
     }
 
@@ -85,11 +88,19 @@ public class OgnlValueStack implements Serializable, ValueStack, ClearableValueS
         securityMemberAccess.setExcludedPackageNames(ognlUtil.getExcludedPackageNames());
     }
 
+    // OgnlValueStack 的初始化
     protected void setRoot(XWorkConverter xworkConverter, CompoundRootAccessor accessor, CompoundRoot compoundRoot,
                            boolean allowStaticMethodAccess) {
+        // 跟对象
         this.root = compoundRoot;
+
+        //
         this.securityMemberAccess = new SecurityMemberAccess(allowStaticMethodAccess);
+
+        // 上下文
         this.context = Ognl.createDefaultContext(this.root, accessor, new OgnlTypeConverterWrapper(xworkConverter), securityMemberAccess);
+
+        // 上下文相关参数的设置
         context.put(VALUE_STACK, this);
         Ognl.setClassResolver(context, accessor);
         ((OgnlContext) context).setTraceEvaluations(false);

@@ -38,6 +38,10 @@ import com.opensymphony.xwork2.util.ValueStack;
  * Web-specific context information for actions. This class subclasses <tt>ActionContext</tt> which
  * provides access to things like the action name, value stack, etc. This class adds access to
  * web objects like servlet parameters, request attributes and things like the HTTP session.
+ *
+ * Xwork 考虑到了与 web 容器对象进行交互的可能
+ *
+ * 全部属于静态方法，在编程层次被随处可以调用 ServletActionContext 锁暴露的接口完成对WEB容器的访问
  */
 public class ServletActionContext extends ActionContext implements StrutsStatics {
 

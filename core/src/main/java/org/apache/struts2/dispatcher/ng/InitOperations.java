@@ -70,7 +70,11 @@ public class InitOperations {
      * Creates and initializes the dispatcher
      */
     public Dispatcher initDispatcher( HostConfig filterConfig ) {
+
+        //创建核心分发器  filterConfig 来自 web.xml 中配置的参数
         Dispatcher dispatcher = createDispatcher(filterConfig);
+
+        // Struts2  初始化主线的入口方法
         dispatcher.init();
         return dispatcher;
     }

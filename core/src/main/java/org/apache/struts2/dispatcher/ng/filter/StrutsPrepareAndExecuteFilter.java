@@ -56,10 +56,12 @@ public class StrutsPrepareAndExecuteFilter implements StrutsStatics, Filter {
     // struts2 进行 Http 请求逻辑处理的操作集合
     protected ExecuteOperations execute;
 
-
+    //排除在 Struts2 处理之外的 url 模式
     protected List<Pattern> excludedPatterns = null;
 
     public void init(FilterConfig filterConfig) throws ServletException {
+
+        //初始化操作类
         InitOperations init = new InitOperations();
 
         //struts2 的核心分发器
@@ -70,12 +72,20 @@ public class StrutsPrepareAndExecuteFilter implements StrutsStatics, Filter {
 
             //核心分发器的初始化
             dispatcher = init.initDispatcher(config);
+
+            // 初始化静态资源加载器
             init.initStaticContentLoader(config, dispatcher);
 
+            //Http 预处理操作类
             prepare = new PrepareOperations(dispatcher);
+
+            //Http 请求处理的逻辑操作类
             execute = new ExecuteOperations(dispatcher);
+
+            //
             this.excludedPatterns = init.buildExcludedPatternsList(dispatcher);
 
+            // 扩展方法
             postInit(dispatcher, filterConfig);
         } finally {
             if (dispatcher != null) {
@@ -127,10 +137,12 @@ public class StrutsPrepareAndExecuteFilter implements StrutsStatics, Filter {
                 }
             }
         } finally {
+            // 这里面包含了 ActionContext 的销毁过程， ActionContext 横跨了整个XWork控制流执行周期
             prepare.cleanupRequest(request);
         }
     }
 
+    //清理分发器
     public void destroy() {
         prepare.cleanupDispatcher();
     }

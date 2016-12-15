@@ -58,6 +58,8 @@ import org.springframework.web.context.WebApplicationContext;
  *
  * @author Simon Stewart
  * @author Eric Hauser
+ *
+ * 实现了 Struts2 的 Action 与 Spring IOC 容器的依赖注入
  */
 public class ActionAutowiringInterceptor extends AbstractInterceptor implements ApplicationContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(ActionAutowiringInterceptor.class);
@@ -65,7 +67,7 @@ public class ActionAutowiringInterceptor extends AbstractInterceptor implements 
     public static final String APPLICATION_CONTEXT = "com.opensymphony.xwork2.spring.interceptor.ActionAutowiringInterceptor.applicationContext";
 
     private boolean initialized = false;
-    private ApplicationContext context;
+    private ApplicationContext context;// spring 容器的操作对象
     private SpringObjectFactory factory;
     private Integer autowireStrategy;
 
@@ -92,7 +94,8 @@ public class ActionAutowiringInterceptor extends AbstractInterceptor implements 
      * @throws Exception
      */
     @Override public String intercept(ActionInvocation invocation) throws Exception {
-        if (!initialized) {
+
+        if (!initialized) {// 没有初始化则 处理
             ApplicationContext applicationContext = (ApplicationContext) ActionContext.getContext().getApplication().get(
                     WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
 
@@ -113,6 +116,8 @@ public class ActionAutowiringInterceptor extends AbstractInterceptor implements 
 
         if (factory != null) {
             Object bean = invocation.getAction();
+
+            // 完成 action 中bean的自动注入
             factory.autoWireBean(bean);
     
             ActionContext.getContext().put(APPLICATION_CONTEXT, context);

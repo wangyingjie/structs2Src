@@ -40,9 +40,14 @@ import java.util.Map;
  * @author Bill Lynch (docs)
  *
  * 提供整个生产线工作运行所必须的数据环境
+ *
+ * 两大职责：1、数据存储； 2、数据共享
+ *
+ * 提供的获取数据库的接口返回值都是经过  map  封装的，与Web容器无关
  */
 public class ActionContext implements Serializable {
 
+    // 线程安全，解决数据共享
     static ThreadLocal<ActionContext> actionContext = new ThreadLocal<ActionContext>();
 
     /**
@@ -95,7 +100,8 @@ public class ActionContext implements Serializable {
      * Constant for the container
      */
     public static final String CONTAINER = "com.opensymphony.xwork2.ActionContext.container";
-    
+
+    //数据存储的场所
     private Map<String, Object> context;
 
     /**
@@ -139,6 +145,8 @@ public class ActionContext implements Serializable {
      * Returns a Map of the ServletContext when in a servlet environment or a generic application level Map otherwise.
      *
      * @return a Map of ServletContext or generic application level Map
+     *
+     * 返回 Map 封装后的 ServletContext
      */
     public Map<String, Object> getApplication() {
         return (Map<String, Object>) get(APPLICATION);
@@ -157,6 +165,8 @@ public class ActionContext implements Serializable {
      * Returns the ActionContext specific to the current thread.
      *
      * @return the ActionContext for the current thread, is never <tt>null</tt>.
+     *
+     * 返回当前线程绑定的 ActionContext
      */
     public static ActionContext getContext() {
         return actionContext.get();
@@ -184,6 +194,8 @@ public class ActionContext implements Serializable {
      * Sets conversion errors which occurred when executing the action.
      *
      * @param conversionErrors a Map of errors which occurred when executing the action.
+     *
+     * 设置错误执行类
      */
     public void setConversionErrors(Map<String, Object> conversionErrors) {
         put(CONVERSION_ERRORS, conversionErrors);
@@ -254,6 +266,8 @@ public class ActionContext implements Serializable {
      * Sets the action parameters.
      *
      * @param parameters the parameters for the current action.
+     *
+     * 所有的参数被封装到 Map 中
      */
     public void setParameters(Map<String, Object> parameters) {
         put(PARAMETERS, parameters);
@@ -265,6 +279,8 @@ public class ActionContext implements Serializable {
      *
      * @return a Map of HttpServletRequest parameters or a multipart map when in a servlet environment, or a
      *         generic Map of parameters otherwise.
+     *
+     * 获取 request 中的请求参数
      */
     public Map<String, Object> getParameters() {
         return (Map<String, Object>) get(PARAMETERS);
@@ -292,6 +308,8 @@ public class ActionContext implements Serializable {
      * Sets the OGNL value stack.
      *
      * @param stack the OGNL value stack.
+     *
+     * 为ActionContext设置 OGNL ValueStack 属性
      */
     public void setValueStack(ValueStack stack) {
         put(VALUE_STACK, stack);
@@ -319,6 +337,8 @@ public class ActionContext implements Serializable {
      * Sets the container for this request
      * 
      * @return The container
+     *
+     * 设置容器  Container
      */
     public Container getContainer() {
         return (Container) get(CONTAINER);

@@ -108,6 +108,10 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
  * @see SessionAware
  * @see ApplicationAware
  * @see PrincipalAware
+ *
+ * 给Action 设置实现了 Aware 接口的属性值
+ *
+ * 为Action 打造了一个扩展的范例
  */
 public class ServletConfigInterceptor extends AbstractInterceptor implements StrutsStatics {
 
@@ -119,6 +123,8 @@ public class ServletConfigInterceptor extends AbstractInterceptor implements Str
      *
      * @param invocation an encapsulation of the action execution state.
      * @throws Exception if an error occurs when setting action properties.
+     *
+     * 被扩展的 Action 实现对应的接口方法，Action 内部用属性变量缓存之
      */
     public String intercept(ActionInvocation invocation) throws Exception {
         final Object action = invocation.getAction();
@@ -161,6 +167,8 @@ public class ServletConfigInterceptor extends AbstractInterceptor implements Str
             ServletContext servletContext = (ServletContext) context.get(SERVLET_CONTEXT);
             ((ServletContextAware) action).setServletContext(servletContext);
         }
+
+        // 接着递归调用
         return invocation.invoke();
     }
 }
