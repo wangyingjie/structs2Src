@@ -33,6 +33,8 @@ import java.io.IOException;
 
 /**
  * Contains execution operations for filters
+ *
+ * 处理 http 请求的静态资源 、 执行Action 2 个核心方法
  */
 public class ExecuteOperations {
 
@@ -54,6 +56,8 @@ public class ExecuteOperations {
      * @throws ServletException
      */
     public boolean executeStaticResourceRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+        // 静态资源的根路径
         // there is no action in this request, should we look for a static resource?
         String resourcePath = RequestUtils.getServletPath(request);
 
@@ -61,6 +65,7 @@ public class ExecuteOperations {
             resourcePath = request.getPathInfo();
         }
 
+        // 获取静态资源的加载处理类
         StaticContentLoader staticResourceLoader = dispatcher.getContainer().getInstance(StaticContentLoader.class);
         if (staticResourceLoader.canHandle(resourcePath)) {
             staticResourceLoader.findStaticResource(resourcePath, request, response);

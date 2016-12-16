@@ -35,14 +35,24 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Jason Carreira
  * @author tm_jee
  * @version $Date$ $Id$
+ *
+ * 是一个将：初始化过程、元素调度过程  合二为一的对象
+ *
+ * 简化上层对象对配置调度的过程
  */
 public class ConfigurationManager {
 
     protected static final Logger LOG = LoggerFactory.getLogger(ConfigurationManager.class);
     protected Configuration configuration;
     protected Lock providerLock = new ReentrantLock();
+
+    // 容器加载器
     private List<ContainerProvider> containerProviders = new CopyOnWriteArrayList<ContainerProvider>();
+
+    // 事件映射加载器 packageProvider
     private List<PackageProvider> packageProviders = new CopyOnWriteArrayList<PackageProvider>();
+
+    // 默认的读取配置文件的名称
     protected String defaultFrameworkBeanName;
     private boolean providersChanged = false;
     private boolean reloadConfigs = true; // for the first time
@@ -62,8 +72,12 @@ public class ConfigurationManager {
      */
     public synchronized Configuration getConfiguration() {
         if (configuration == null) {
+
+            // 创建 DefaultConfiguration 对象
             setConfiguration(createConfiguration(defaultFrameworkBeanName));
             try {
+
+                // 初始化 container对象 ，调用 DefaultConfiguration 的reloaContainer
                 configuration.reloadContainer(getContainerProviders());
             } catch (ConfigurationException e) {
                 setConfiguration(null);

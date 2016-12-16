@@ -68,6 +68,10 @@ public class StrutsRequestWrapper extends HttpServletRequestWrapper {
      * Gets the object, looking in the value stack if not found
      *
      * @param key The attribute key
+     *
+     * 将从 request 中获取数据的操作进行了包装
+     *
+     * 最终都是从 ValueStack 中获取到数据信息
      */
     public Object getAttribute(String key) {
         if (key == null) {
@@ -92,6 +96,8 @@ public class StrutsRequestWrapper extends HttpServletRequestWrapper {
                 try {
                     // If not found, then try the ValueStack
                     ctx.put(REQUEST_WRAPPER_GET_ATTRIBUTE, Boolean.TRUE);
+
+                    // 最终是从 ValueStack 中获取数据
                     ValueStack stack = ctx.getValueStack();
                     if (stack != null) {
                         attribute = stack.findValue(key);

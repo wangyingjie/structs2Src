@@ -40,6 +40,8 @@ import java.io.IOException;
 /**
  * Executes the discovered request information.  This filter requires the {@link StrutsPrepareFilter} to have already
  * been executed in the current chain.
+ *
+ * 可以在 Web.xml 中添加该过滤器  用于执行的扩展
  */
 public class StrutsExecuteFilter implements StrutsStatics, Filter {
     protected PrepareOperations prepare;

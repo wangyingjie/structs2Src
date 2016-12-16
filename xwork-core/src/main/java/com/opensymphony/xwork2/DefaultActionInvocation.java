@@ -391,16 +391,19 @@ public class DefaultActionInvocation implements ActionInvocation {
 
     public void init(ActionProxy proxy) {
         this.proxy = proxy;
+        // 构造上下文环境
         Map<String, Object> contextMap = createContextMap();
 
         // Setting this so that other classes, like object factories, can use the ActionProxy and other
         // contextual information to operate
         ActionContext actionContext = ActionContext.getContext();
 
+        // 将 ActionInvocation 保存至 ActionContext 中利用ActionContext可以实现数据的共享
         if (actionContext != null) {
             actionContext.setActionInvocation(this);
         }
 
+        // todo  创建Action对象
         createAction(contextMap);
 
         if (pushAction) {// 把 action 放到 context 中
@@ -408,13 +411,18 @@ public class DefaultActionInvocation implements ActionInvocation {
             contextMap.put("action", action);
         }
 
+        //创建 ActionInvocation 的上下文环境
+        //将 ActionInvocation 的上下文环境与 ActionContext 等同起来
         invocationContext = new ActionContext(contextMap);
         invocationContext.setName(proxy.getActionName());
 
+        // 创建拦截器链
         createInterceptors(proxy);
     }
 
     protected void createInterceptors(ActionProxy proxy) {
+
+        // 拦截器链置为初始调度状态
         // get a new List so we don't get problems with the iterator if someone changes the list
         List<InterceptorMapping> interceptorList = new ArrayList<InterceptorMapping>(proxy.getConfig().getInterceptors());
         interceptors = interceptorList.iterator();
@@ -433,12 +441,17 @@ public class DefaultActionInvocation implements ActionInvocation {
 
             Object methodResult;
             try {
+
+                // 通过反射技术执行 method 方法
                 methodResult = ognlUtil.callMethod(methodName + "()", getStack().getContext(), action);
+
             } catch (MethodFailedException e) {
                 // if reason is missing method, try find version with "do" prefix
                 if (e.getReason() instanceof NoSuchMethodException) {
                     try {
                         String altMethodName = "do" + methodName.substring(0, 1).toUpperCase() + methodName.substring(1) + "()";
+
+                        //
                         methodResult = ognlUtil.callMethod(altMethodName, getStack().getContext(), action);
                     } catch (MethodFailedException e1) {
                         // if still method doesn't exist, try checking UnknownHandlers

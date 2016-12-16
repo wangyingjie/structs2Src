@@ -43,6 +43,10 @@ import javax.servlet.http.HttpServletRequest;
  * a String is returned rather than an actual request object.
  *
  * <!-- END SNIPPET: javadoc -->
+ *
+ * 属于 struts2 进行 Url Mapping 关系查找的核心类
+ *
+ * 可以自行进行扩展
  */
 public interface ActionMapper {
 

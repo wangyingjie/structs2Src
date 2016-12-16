@@ -151,6 +151,8 @@ public class PrepareOperations {
             // Wrap request first, just in case it is multipart/form-data
             // parameters might not be accessible through before encoding (ww-1278)
             request = dispatcher.wrapRequest(request);
+
+            // 将装饰完的 StrutsRequestWrapper  绑定到当前线程
             ServletActionContext.setRequest(request);
         } catch (IOException e) {
             throw new ServletException("Could not wrap servlet request with MultipartRequestWrapper!", e);
@@ -178,6 +180,8 @@ public class PrepareOperations {
         ActionMapping mapping = (ActionMapping) request.getAttribute(STRUTS_ACTION_MAPPING_KEY);
         if (mapping == null || forceLookup) {
             try {
+
+                // 使用 ActionMapper 的实现类来构建 ActionMapping
                 mapping = dispatcher.getContainer().getInstance(ActionMapper.class).getMapping(request, dispatcher.getConfigurationManager());
                 if (mapping != null) {
                     request.setAttribute(STRUTS_ACTION_MAPPING_KEY, mapping);

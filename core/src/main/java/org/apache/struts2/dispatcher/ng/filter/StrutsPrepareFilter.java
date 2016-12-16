@@ -39,6 +39,8 @@ import java.util.regex.Pattern;
 
 /**
  * Prepares the request for execution by a later {@link org.apache.struts2.dispatcher.ng.filter.StrutsExecuteFilter} filter instance.
+ *
+ * 可以在 Web.xml 中添加该过滤器  用于预处理的扩展
  */
 public class StrutsPrepareFilter implements StrutsStatics, Filter {
 

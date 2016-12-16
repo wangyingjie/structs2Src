@@ -191,6 +191,7 @@ public class DefaultActionProxy implements ActionProxy, Serializable {
                 throw new ConfigurationException("Invalid method: " + method + " for action " + actionName);
             }
 
+            // 初始化 ActionInvocation
             invocation.init(this);
 
         } finally {

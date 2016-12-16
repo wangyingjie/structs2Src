@@ -349,6 +349,8 @@ public class OgnlUtil {
     public Object callMethod(final String name, final Map<String, Object> context, final Object root) throws OgnlException {
         return compileAndExecuteMethod(name, context, new OgnlTask<Object>() {
             public Object execute(Object tree) throws OgnlException {
+
+                // Action 的方法执行，通过了 Ognl 表达式引擎的方式完成
                 return Ognl.getValue(tree, context, root);
             }
         });

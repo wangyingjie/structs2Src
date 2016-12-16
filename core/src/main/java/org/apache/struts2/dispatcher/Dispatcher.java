@@ -73,6 +73,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @see org.apache.struts2.dispatcher.ng.InitOperations
  *
  * 不仅是 Http 请求预处理的实际执行者，更是将 Http 请求与Web容器进行解耦并进行逻辑处理转发的执行驱动核心
+ *
+ * 真正实现了将 Http请求与Mvc实现 XWork 架构分离的核心分发器
+ *
+ * 左膀右臂：PrepareOperations 、 ExecuteOperations 两个代理类实现了程序逻辑的扩展
  */
 public class Dispatcher {
 
@@ -448,6 +452,8 @@ public class Dispatcher {
     }
 
     private Container init_PreloadConfiguration() {
+
+        // 从 Configuration 中获取 Container 对象
         Container container = getContainer();
 
         boolean reloadi18n = Boolean.valueOf(container.getInstance(String.class, StrutsConstants.STRUTS_I18N_RELOAD));
@@ -481,24 +487,34 @@ public class Dispatcher {
      */
     public void init() {
 
+        // 1 configurationManager 初始化
     	if (configurationManager == null) {
     		configurationManager = createConfigurationManager(DefaultBeanSelectionProvider.DEFAULT_BEAN_NAME);
     	}
 
         try {
+
+    	    // 2 定义了各种配置的加载方式  并没有真正执行加载配置的逻辑
             init_FileManager();
             init_DefaultProperties(); // [1]
-            init_TraditionalXmlConfigurations(); // [2]
+            init_TraditionalXmlConfigurations(); // [2]//"struts-default.xml,struts-plugin.xml,struts.xml"; 配置文件的加载
             init_LegacyStrutsProperties(); // [3]
             init_CustomConfigurationProviders(); // [5]
-            init_FilterInitParameters() ; // [6]
-            init_AliasStandardObjects() ; // [7]
+            init_FilterInitParameters() ; // [6]//初始化由  web.xml  传入的参数
+            init_AliasStandardObjects() ; // [7]// 默认容器的内置对象
 
+            // 3 对配置加载方式的逻辑进行执行、初始化struts中的对象管理器
             Container container = init_PreloadConfiguration();
+            // Struts2 中定义的对象的生命周期在此操作后都被纳入到容器中进行管理
             container.inject(this);
+
+
+            // 4 额外的初始化  reloading 、weblogic 的特殊设置
             init_CheckWebLogicWorkaround(container);
 
             if (!dispatcherListeners.isEmpty()) {
+
+                //DispatcherListener 接口为我们提供了 struts2 初始化主线的一个重要扩展
                 for (DispatcherListener l : dispatcherListeners) {
                     l.dispatcherInitialized(this);
                 }
@@ -551,17 +567,20 @@ public class Dispatcher {
     public void serviceAction(HttpServletRequest request, HttpServletResponse response, ActionMapping mapping)
             throws ServletException {
 
+        // mvc 运行的数据环境
         Map<String, Object> extraContext = createContextMap(request, response, mapping);
 
         // If there was a previous value stack, then create a new copy and pass it in to be used by the new Action
         ValueStack stack = (ValueStack) request.getAttribute(ServletActionContext.STRUTS_VALUESTACK_KEY);
-        boolean nullStack = stack == null;
+        boolean nullStack = (stack == null);
         if (nullStack) {
             ActionContext ctx = ActionContext.getContext();
             if (ctx != null) {
                 stack = ctx.getValueStack();
             }
         }
+
+        // 将 ValueStack 设置到当前线程中
         if (stack != null) {
             extraContext.put(ActionContext.VALUE_STACK, valueStackFactory.createValueStack(stack));
         }
@@ -573,11 +592,13 @@ public class Dispatcher {
             String name = mapping.getName();
             String method = mapping.getMethod();
 
+            // 创建 ActionProxy 对象，这里已经完全进入了 XWork 的世界
             ActionProxy proxy = getContainer().getInstance(ActionProxyFactory.class).createActionProxy(
                     namespace, name, method, extraContext, true, false);
 
             request.setAttribute(ServletActionContext.STRUTS_VALUESTACK_KEY, proxy.getInvocation().getStack());
 
+            // ActionMapping 中包含Result对象，表名直接跳过Aciton而执行Result
             // if the ActionMapping says to go straight to a result, do it!
             if (mapping.getResult() != null) {
                 Result result = mapping.getResult();
@@ -588,6 +609,7 @@ public class Dispatcher {
                 proxy.execute();
             }
 
+            // 如果之前存在 ValueStack 则直接设置会 Request 对象
             // If there was a previous value stack then set it back onto the request
             if (!nullStack) {
                 request.setAttribute(ServletActionContext.STRUTS_VALUESTACK_KEY, stack);
@@ -785,6 +807,8 @@ public class Dispatcher {
      *
      * @param request The request
      * @param response The response
+     *
+     * 设置 编码、本地化  资源
      */
     public void prepare(HttpServletRequest request, HttpServletResponse response) {
         String encoding = null;
@@ -988,6 +1012,8 @@ public class Dispatcher {
         if (mgr == null) {
             throw new IllegalStateException("The configuration manager shouldn't be null");
         } else {
+
+            // 配置文件加载的核心处理方法
             Configuration config = mgr.getConfiguration();
             if (config == null) {
                 throw new IllegalStateException("Unable to load configuration");

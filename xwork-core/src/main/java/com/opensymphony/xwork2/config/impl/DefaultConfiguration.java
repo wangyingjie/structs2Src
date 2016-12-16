@@ -224,25 +224,32 @@ public class DefaultConfiguration implements Configuration {
      * buildRuntimeConfiguration().
      *
      * @throws ConfigurationException
+     *
+     * 配置文件初始化的核心方法
      */
     public synchronized List<PackageProvider> reloadContainer(List<ContainerProvider> providers) throws ConfigurationException {
         packageContexts.clear();
         loadedFileNames.clear();
         List<PackageProvider> packageProviders = new ArrayList<PackageProvider>();
 
+        // 定义容器构造器
         ContainerProperties props = new ContainerProperties();
-
         // builder 模式
         ContainerBuilder builder = new ContainerBuilder();
+
+
         Container bootstrap = createBootstrapContainer(providers);
-        for (final ContainerProvider containerProvider : providers)
-        {
+
+        // 完成 ContainerProvider 配置加载方式的所有逻辑
+        for (final ContainerProvider containerProvider : providers) {
             bootstrap.inject(containerProvider);
             containerProvider.init(this);
+            // 构造器搜集参数的过程
             containerProvider.register(builder, props);
         }
         props.setConstants(builder);
 
+        // 调用 ContainerBuilder#factory 完成参数的搜集
         builder.factory(Configuration.class, new Factory<Configuration>() {
             public Configuration create(Context context) throws Exception {
                 return DefaultConfiguration.this;
@@ -253,21 +260,24 @@ public class DefaultConfiguration implements Configuration {
         try {
             // Set the bootstrap container for the purposes of factory creation
 
+            //ActionContext 的基本构建对象
             setContext(bootstrap);
             container = builder.create(false);
             setContext(container);
             objectFactory = container.getInstance(ObjectFactory.class);
 
             // Process the configuration providers first
-            for (final ContainerProvider containerProvider : providers)
-            {
+            for (final ContainerProvider containerProvider : providers) {
                 if (containerProvider instanceof PackageProvider) {
+
+                    // 容器创建出来之后实施注入
                     container.inject(containerProvider);
-                    ((PackageProvider)containerProvider).loadPackages();
-                    packageProviders.add((PackageProvider)containerProvider);
+                    ((PackageProvider) containerProvider).loadPackages();
+                    packageProviders.add((PackageProvider) containerProvider);
                 }
             }
 
+            // packageProvider 的加载过程
             // Then process any package providers from the plugins
             Set<String> packageProviderNames = container.getInstanceNames(PackageProvider.class);
             for (String name : packageProviderNames) {
@@ -277,6 +287,8 @@ public class DefaultConfiguration implements Configuration {
                 packageProviders.add(provider);
             }
 
+            // 对所有的 packageConfig、namespace级别的重新分类
+            // 目的在于响应Http请求是可以根据namespace进行Url匹配
             rebuildRuntimeConfiguration();
         } finally {
             if (oldContext == null) {
@@ -571,6 +583,8 @@ public class DefaultConfiguration implements Configuration {
             return super.setProperty(key, value);
         }
 
+        // 调用此方法后，所有的 properties 文件中的运行参数都会被处理
+        // 对调用 factory 方法进行参数搜集
         public void setConstants(ContainerBuilder builder) {
             for (Object keyobj : keySet()) {
                 String key = (String)keyobj;
