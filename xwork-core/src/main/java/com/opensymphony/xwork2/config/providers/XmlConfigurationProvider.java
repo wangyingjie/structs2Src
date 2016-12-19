@@ -131,6 +131,8 @@ public class XmlConfigurationProvider implements ConfigurationProvider {
     public void init(Configuration configuration) {
         this.configuration = configuration;
         this.includedFileNames = configuration.getLoadedFileNames();
+
+        // 解析 xml 配置文件
         loadDocuments(configFileName);
     }
 
@@ -976,6 +978,15 @@ public class XmlConfigurationProvider implements ConfigurationProvider {
     //            addPackage(packageElement);
     //        }
     //    }
+
+    /**
+     * 1、xml 配置文件的寻址
+     * 2、xml 配置文件的解析
+     *
+     * @param fileName
+     * @param includeElement
+     * @return
+     */
     private List<Document> loadConfigurationFiles(String fileName, Element includeElement) {
         List<Document> docs = new ArrayList<Document>();
         List<Document> finalDocs = new ArrayList<Document>();
@@ -991,6 +1002,8 @@ public class XmlConfigurationProvider implements ConfigurationProvider {
 
             IOException ioException = null;
             try {
+
+                // 根据文件名进行 xml 文件寻址
                 urls = getConfigurationUrls(fileName);
             } catch (IOException ex) {
                 ioException = ex;

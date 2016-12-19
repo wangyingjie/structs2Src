@@ -376,7 +376,10 @@ public class Dispatcher {
         configurationManager.addContainerProvider(new PropertiesConfigurationProvider());
     }
 
+    // 指定基于传统 xml 文件配置方式的配置处理
     private void init_TraditionalXmlConfigurations() {
+
+        // web.xml 中配置的 config 值
         String configPaths = initParams.get("config");
         if (configPaths == null) {
             configPaths = DEFAULT_CONFIGURATION_PATHS;

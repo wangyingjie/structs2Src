@@ -50,13 +50,14 @@ public class ClassLoaderUtil {
 
          AggregateIterator<URL> iterator = new AggregateIterator<URL>();
 
+         // 使用当前线程的 ContextClassLoader 在classpath下面查找资源
          iterator.addEnumeration(Thread.currentThread().getContextClassLoader().getResources(resourceName));
 
-         if (!iterator.hasNext() || aggregate) {
+         if (!iterator.hasNext() || aggregate) {//没找到在 Class 的ClassLoader中查找
              iterator.addEnumeration(ClassLoaderUtil.class.getClassLoader().getResources(resourceName));
          }
 
-         if (!iterator.hasNext() || aggregate) {
+         if (!iterator.hasNext() || aggregate) {// 当前调用者中继续查找
              ClassLoader cl = callingClass.getClassLoader();
 
              if (cl != null) {
@@ -64,6 +65,7 @@ public class ClassLoaderUtil {
              }
          }
 
+         // 以上都没找到则会在 在当前文件名前加 '/' 符号，递归调用查找
          if (!iterator.hasNext() && (resourceName != null) && ((resourceName.length() == 0) || (resourceName.charAt(0) != '/'))) { 
              return getResources('/' + resourceName, callingClass, aggregate);
          }

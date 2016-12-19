@@ -27,6 +27,8 @@ import com.opensymphony.xwork2.util.ValueStack;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 /**
@@ -77,6 +79,9 @@ public class StrutsRequestWrapper extends HttpServletRequestWrapper {
         if (key == null) {
             throw new NullPointerException("You must specify a key value");
         }
+
+        // 获取随机数
+        //ThreadLocalRandom.current().nextInt();
 
         if (disableRequestAttributeValueStackLookup || key.startsWith("javax.servlet")) {
             // don't bother with the standard javax.servlet attributes, we can short-circuit this
