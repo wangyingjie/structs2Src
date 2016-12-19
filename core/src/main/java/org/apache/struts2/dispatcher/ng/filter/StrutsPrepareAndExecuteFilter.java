@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
  * Handles both the preparation and execution phases of the Struts dispatching process.  This filter is better to use
  * when you don't have another filter that needs access to action context information, such as Sitemesh.
  *
- * 该类是配置在 web.xml 中的 structs2 的核心过滤器
+ * 该类是配置在 web.xml 中的 struts2 的核心过滤器
  *
  * struts2 请求预处理 and 执行业务逻辑的执行入口类
  *
@@ -102,7 +102,7 @@ public class StrutsPrepareAndExecuteFilter implements StrutsStatics, Filter {
     }
 
     /**
-     *  structs2 的 执行入口，以Filter为切入点
+     *  struts2 的 执行入口，以Filter为切入点
      *
      * @param req
      * @param res
